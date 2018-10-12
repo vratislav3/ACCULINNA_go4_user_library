@@ -163,24 +163,25 @@ ClassImp(UserProcBeamMonitoring2)
 
 void UserProcBeamMonitoring2::FillMWPC() {
 
-	DetEventStation* st_MWPCX1 = (DetEventStation*)(v_input->getEventElement(fParBD->stationMWPCX1name.Data(),1));
+//	DetEventStation* st_MWPCX1 = (DetEventStation*)(v_input->getEventElement(fParBD->stationMWPCX1name.Data(),1));
+	DetEventStation* st_MWPCX1 = (DetEventStation*)(v_input->getEventElement(fParBD->GetStationMWPCx1name().Data(),1));
 	if(!st_MWPCX1) {
-		cout << " station " << fParBD->stationMWPCX1name << " was not found in event " << fEventCounter << endl;
+		cout << " station " << fParBD->GetStationMWPCx1name() << " was not found in event " << fEventCounter << endl;
 	}
 
-	DetEventStation* st_MWPCY1 = (DetEventStation*)(v_input->getEventElement(fParBD->stationMWPCY1name.Data(),1));
+	DetEventStation* st_MWPCY1 = (DetEventStation*)(v_input->getEventElement(fParBD->GetStationMWPCy1name().Data(),1));
 	if(!st_MWPCY1) {
-		cout << " station " << fParBD->stationMWPCY1name << " was not found in event " << fEventCounter << endl;
+		cout << " station " << fParBD->GetStationMWPCy1name() << " was not found in event " << fEventCounter << endl;
 	}
 
-	DetEventStation* st_MWPCX2 = (DetEventStation*)(v_input->getEventElement(fParBD->stationMWPCX2name.Data(),1));
+	DetEventStation* st_MWPCX2 = (DetEventStation*)(v_input->getEventElement(fParBD->GetStationMWPCx2name().Data(),1));
 	if(!st_MWPCX2) {
-		cout << " station " << fParBD->stationMWPCX2name << " was not found in event " << fEventCounter << endl;
+		cout << " station " << fParBD->GetStationMWPCx2name() << " was not found in event " << fEventCounter << endl;
 	}
 
-	DetEventStation* st_MWPCY2 = (DetEventStation*)(v_input->getEventElement(fParBD->stationMWPCY2name.Data(),1));
+	DetEventStation* st_MWPCY2 = (DetEventStation*)(v_input->getEventElement(fParBD->GetStationMWPCy2name().Data(),1));
 	if(!st_MWPCY2) {
-		cout << " station " << fParBD->stationMWPCY2name << " was not found in event " << fEventCounter << endl;
+		cout << " station " << fParBD->GetStationMWPCy2name() << " was not found in event " << fEventCounter << endl;
 	}
 
 	vector <Int_t> nx1;

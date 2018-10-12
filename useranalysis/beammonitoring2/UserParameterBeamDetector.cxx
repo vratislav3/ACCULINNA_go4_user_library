@@ -23,9 +23,9 @@ UserParameterBeamDetector::UserParameterBeamDetector(const char* name) :
 	fMWPCx2Name = "MWPC3";
 	fMWPCy2Name = "MWPC4";
 
-	stationMWPCX1name.Form("%s_%s", fBeamDetName.Data(), fMWPCx1Name.Data());
-	stationMWPCY1name.Form("%s_%s", fBeamDetName.Data(), fMWPCy1Name.Data());
-	stationMWPCX2name.Form("%s_%s", fBeamDetName.Data(), fMWPCx2Name.Data());
-	stationMWPCY2name.Form("%s_%s", fBeamDetName.Data(), fMWPCy2Name.Data());
+//	stationMWPCX1name.Form("%s_%s", fBeamDetName.Data(), fMWPCx1Name.Data());
+//	stationMWPCY1name.Form("%s_%s", fBeamDetName.Data(), fMWPCy1Name.Data());
+//	stationMWPCX2name.Form("%s_%s", fBeamDetName.Data(), fMWPCx2Name.Data());
+//	stationMWPCY2name.Form("%s_%s", fBeamDetName.Data(), fMWPCy2Name.Data());
 
 }

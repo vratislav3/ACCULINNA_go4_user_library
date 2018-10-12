@@ -30,12 +30,32 @@ public:
 	TString fMWPCx2Name;
 	TString fMWPCy2Name;
 
-	TString stationMWPCX1name;
-	TString stationMWPCY1name;
-	TString stationMWPCX2name;
-	TString stationMWPCY2name;
+//private:
+//	TString stationMWPCX1name;
+
+//public:
+//	TString stationMWPCY1name;
+//	TString stationMWPCX2name;
+//	TString stationMWPCY2name;
 
 	ClassDef(UserParameterBeamDetector,1)
+
+	const TString GetStationMWPCx1name() const {
+//		return stationMWPCX1name;
+		return fBeamDetName + "_" + fMWPCx1Name;
+	}
+
+	const TString GetStationMWPCx2name() const {
+		return fBeamDetName + "_" + fMWPCx1Name;
+	}
+
+	const TString GetStationMWPCy1name() const {
+		return fBeamDetName + "_" + fMWPCy1Name;
+	}
+
+	const TString GetStationMWPCy2name() const {
+		return fBeamDetName + "_" + fMWPCy2Name;
+	}
 };
 
 #endif
