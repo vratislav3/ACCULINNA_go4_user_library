@@ -1,4 +1,4 @@
-#include "UserProcAdvMonitoring.h"
+#include "UserProcTestMonitoring.h"
 
 // STD
 #include <fstream>
@@ -18,7 +18,7 @@ using std::endl;
 #include "data/DetEventStation.h"
 #include "data/DetMessage.h"
 
-#include "UserHistosAdvMonitoring.h"
+#include "UserHistosTestMonitoring.h"
 #include "UserParameter.h"
 #include "setupconfigcppwrapper/SetupConfiguration.h"
 
@@ -31,48 +31,46 @@ using namespace std;
   This option produces A LOT OF DATA - run your analysis with a
   small number of events (~10-100)
 */
-//#define DEBUGADVMON
+//#define DEBUGTestMON
 
-UserProcAdvMonitoring::UserProcAdvMonitoring(const char* name) :
+UserProcTestMonitoring::UserProcTestMonitoring(const char* name) :
 	TGo4EventProcessor(name),
 	fEventCounter(0)
 {
-	fTrigger = 1; 
-	fst_MWPC = "Beam_detector_MWPC";
-
-	fHistoMan = new UserHistosAdvMonitoring();
-	// cerr << " UserProcAdvMonitoring CALLED !!! ## &Y$@!UHNEFJNASJDf " << endl;
-	fFileSummary = fopen("textoutput/summaryAdvMonitoring.txt", "w");
+	fHistoMan_test = new UserHistosTestMonitoring();
+	readParFile("/media/user/work/data/analysisexp1804/presentPars/csi_r_ec.clb");
+	// cerr << " UserProcTestMonitoring CALLED !!! ## &Y$@!UHNEFJNASJDf " << endl;
+	fFileSummary = fopen("textoutput/summaryTestMonitoring.txt", "w");
 	if (fFileSummary == NULL) {
 		//TODO error
-		cerr << "[WARN  ] " << "Could not open output text summary file '" << "summaryAdvMonitoring.txt" << "'" << endl;
+		cerr << "[WARN  ] " << "Could not open output text summary file '" << "summaryTestMonitoring.txt" << "'" << endl;
 	}
 }
 
-UserProcAdvMonitoring::~UserProcAdvMonitoring()
+UserProcTestMonitoring::~UserProcTestMonitoring()
 {
-	if (fHistoMan) delete fHistoMan;
+	if (fHistoMan_test) delete fHistoMan_test;
 	if (fFileSummary != NULL) {
 		fclose(fFileSummary);
 	}
 }
 
-Bool_t UserProcAdvMonitoring::BuildEvent(TGo4EventElement* p_dest)
+Bool_t UserProcTestMonitoring::BuildEvent(TGo4EventElement* p_dest)
 {
-	// cerr << "\t ### Build Event was called! next EVENT ### " <<  endl;
+	// cerr << "\t ### UserProcTestMonitoring::BuildEvent was called ### " <<  endl;
 
 	Bool_t v_isValid = kFALSE;
 
 	DetEventFull* v_input = (DetEventFull*)GetInputEvent("stepRepackedProvider1");
 	if (v_input == NULL)
 	{
-		cerr << "[WARN  ] " << "UserProcAdvMonitoring::BuildEvent(): no input event!" << endl;
+		cerr << "[WARN  ] " << "UserProcTestMonitoring::BuildEvent(): no input event!" << endl;
 		return v_isValid;
 	}
 	v_isValid = kTRUE;
 
-	#ifdef DEBUGADVMON
-	cerr << "[DEBUG ] " << "UserProcAdvMonitoring: Event " << fEventCounter
+	#ifdef DEBUGTestMON
+	cerr << "[DEBUG ] " << "UserProcTestMonitoring: Event " << fEventCounter
 	     << " ======================================================================================================"
 	     << endl;
 	#endif
@@ -81,9 +79,10 @@ Bool_t UserProcAdvMonitoring::BuildEvent(TGo4EventElement* p_dest)
 
 	Short_t v_NsubElems = v_input->getNElements();
 	//cerr << v_NsubElems << " subelements in the input full event." << endl;
+	Int_t trigger;
+	Int_t x1,y1;
 	// Loop over sub-elements. There is one sub-element which is the 'DetEventCommon'
 	// and all other are 'DetEventDetector's
-	UInt_t trigger;
 
 	TGo4EventElement* v_comElement = v_input->getEventElement("DetEventCommon",1);
 	if(!v_comElement) {
@@ -93,10 +92,10 @@ Bool_t UserProcAdvMonitoring::BuildEvent(TGo4EventElement* p_dest)
 	DetEventCommon* v_commSubEl = (DetEventCommon*)(v_comElement);
 	trigger = v_commSubEl->trigger;
 	if(trigger>5) {
-		cout << " Event wont befst_MWPC processed " << endl;
+		cout << " Event wont be processed " << endl;
 		return kFALSE;
 	}
-	fHistoMan->fTrigger->Fill(trigger);
+	fHistoMan_test->fTrigger_test->Fill(trigger);
 
 	for (Short_t i=0; i<v_NsubElems; i++) {
 		TGo4EventElement* v_subElement = v_input->getEventElement(i);
@@ -129,11 +128,11 @@ Bool_t UserProcAdvMonitoring::BuildEvent(TGo4EventElement* p_dest)
 					unsigned int chFullId = stId*100 + v_curDetM->GetStChannel();
 
 					// Fill automatically generated histograms
-					if(stName.Contains(fst_MWPC.Data()) && trigger==fTrigger){
-						fHistoMan->fAutoHistos.at(chFullId)->Fill(v_curDetM->GetStChannel());
+					if(stName.Contains("Beam_detector_MWPC")){
+						fHistoMan_test->fAutoHistos_test.at(chFullId)->Fill(v_curDetM->GetStChannel());
 					}
 					else {
-						fHistoMan->fAutoHistos.at(chFullId)->Fill(v_curDetM->GetValue());
+						fHistoMan_test->fAutoHistos_test.at(chFullId)->Fill(v_curDetM->GetValue());
 					}
 
 					//TODO implement here your actions which require processing
@@ -153,30 +152,55 @@ Bool_t UserProcAdvMonitoring::BuildEvent(TGo4EventElement* p_dest)
 	return v_isValid;
 }
 
-void UserProcAdvMonitoring::UserPreLoop()
+void UserProcTestMonitoring::UserPreLoop()
 {
 	// Get the all-accessible parameter-set object
 	UserParameter* v_params = (UserParameter*)GetParameter("UserParameter");
 	fSetupConfig = v_params->GetSetupConfig();
 
-	#ifdef DEBUGADVMON
-	cerr << "[DEBUG ] " << "UserProcAdvMonitoring::UserPreLoop ====================================" << endl;
+	#ifdef DEBUGTestMON
+	cerr << "[DEBUG ] " << "UserProcTestMonitoring::UserPreLoop ====================================" << endl;
 	#endif
 
-	fHistoMan->GenerateAutoHistos();
+	fHistoMan_test->GenerateAutoHistos();
 
-	#ifdef DEBUGADVMON
+	#ifdef DEBUGTestMON
 	cerr << "[DEBUG ] " << "=======================================================================" << endl;
 	#endif
 }
 
-void UserProcAdvMonitoring::UserPostLoop()
+void UserProcTestMonitoring::UserPostLoop()
 {
 }
 
-void UserProcAdvMonitoring::ProcessMessage(DetMessage* p_message, TString stName)
+void UserProcTestMonitoring::ProcessMessage(DetMessage* p_message, TString stName)
 {
 	//TODO implement your processing of independent messages here
+
 }
 
-ClassImp(UserProcAdvMonitoring)
+void UserProcTestMonitoring::readParFile(TString parFile){
+	ifstream myfile;
+  TString line;
+  Int_t count=-2;
+  myfile.open("/media/user/work/data/analysisexp1804/presentPars/csi_r_ec.clb");
+  while (! myfile.eof() ) {
+    line.ReadLine(myfile);
+    if(count < 0){
+      count++;
+      continue;
+    }
+    if(line.IsNull()) break;
+    sscanf(line.Data(),"%lf %lf", parCsI_R_1+count,parCsI_R_2+count);
+    count++;
+  }  
+
+  // cerr << endl << " pars for CsR crystals" << endl;
+  // for(Int_t i=0;i<16;i++) cerr << parCsI_R_1[i] << " " << parCsI_R_2[i] << endl; 
+}
+
+void UserProcTestMonitoring::fill2D(TGo4CompositeEvent* dEvent){
+
+}
+
+ClassImp(UserProcTestMonitoring)

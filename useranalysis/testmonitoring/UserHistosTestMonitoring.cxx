@@ -1,4 +1,4 @@
-#include "UserHistosAdvMonitoring.h"
+#include "UserHistosTestMonitoring.h"
 
 // ROOT
 #include <TH1D.h>
@@ -10,14 +10,13 @@
 // Project
 #include "setupconfigcppwrapper/SetupConfiguration.h"
 
-UserHistosAdvMonitoring::UserHistosAdvMonitoring()
+UserHistosTestMonitoring::UserHistosTestMonitoring()
 {
 	TGo4Analysis* a = TGo4Analysis::Instance();
-	fst_MWPC = "Beam_detector_MWPC";
-	fTrigger = a->MakeTH1('I', "Trigger", "Values of trigger",   5, 0., 5.);
+	fTrigger_test = a->MakeTH1('I', "Trigger", "Values of trigger_test",   5, 0., 4.);
 }
 
-UserHistosAdvMonitoring::~UserHistosAdvMonitoring()
+UserHistosTestMonitoring::~UserHistosTestMonitoring()
 {
 	/**
 	 * Not 100% sure, but it looks as if you do not need to delete your histograms yourself.
@@ -25,7 +24,7 @@ UserHistosAdvMonitoring::~UserHistosAdvMonitoring()
 	 */
 }
 
-void UserHistosAdvMonitoring::GenerateAutoHistos(void)
+void UserHistosTestMonitoring::GenerateAutoHistos(void)
 {
 	TGo4Analysis* a = TGo4Analysis::Instance();
 
@@ -60,23 +59,23 @@ void UserHistosAdvMonitoring::GenerateAutoHistos(void)
 		Int_t nBins,nLow,nUp;
 		TString stationNameFull;
 		stationNameFull = v_detector + "_" + v_station;
-		// if(stationNameFull.Contains("DAQ")) continue;
-		if(stationNameFull.Contains(fst_MWPC.Data())) {
+		if(stationNameFull.Contains("DAQ")) continue;
+		if(stationNameFull.Contains("Beam_detector_MWPC")) {
 			// cout << stationNameFull << endl;
 			nBins = 32;
 			nLow = 0;
 			nUp = 31;
-			newHistoName.Form("AdvMon/WIRES/%s", v_station.Data());
+			newHistoName.Form("%s/WIRES/%s", v_detector.Data(), v_station.Data());
 		}
 		else {
 			nBins = 500;
 			nLow = 0;
 			nUp = 10000;
-			newHistoName.Form("AdvMon/%s/%s/%s_%d", v_detector.Data(), v_station.Data(), v_station.Data(), v_det_ch);
+			newHistoName.Form("%s/%s/%s_%d", v_detector.Data(), v_station.Data(), v_station.Data(), v_det_ch);
 		}
 		TH1* v_histo = a->MakeTH1('D', newHistoName, newHistoName, nBins, nLow, nUp); //TODO ranges
-		fAutoHistos.insert(std::pair<unsigned int, TH1*>(v_statid*100+v_det_ch, v_histo));
+		fAutoHistos_test.insert(std::pair<unsigned int, TH1*>(v_statid*100+v_det_ch, v_histo));
 	}
 }
 
-ClassImp(UserHistosAdvMonitoring)
+ClassImp(UserHistosTestMonitoring)

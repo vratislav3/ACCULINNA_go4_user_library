@@ -1,4 +1,4 @@
-#include "UserHistosAdvMonitoring.h"
+#include "UserHistosBeamMonitoring2.h"
 
 // ROOT
 #include <TH1D.h>
@@ -10,14 +10,29 @@
 // Project
 #include "setupconfigcppwrapper/SetupConfiguration.h"
 
-UserHistosAdvMonitoring::UserHistosAdvMonitoring()
+UserHistosBeamMonitoring2::UserHistosBeamMonitoring2()
 {
 	TGo4Analysis* a = TGo4Analysis::Instance();
-	fst_MWPC = "Beam_detector_MWPC";
-	fTrigger = a->MakeTH1('I', "Trigger", "Values of trigger",   5, 0., 5.);
+//	fTrigger = a->MakeTH1('I', "trigger", "Values of trigger_test",   5, 0., 5.);
+//	fMWPCX1 = a->MakeTH1('I', "BM2/MWPCX1", "My new histogram", 32, 0, 32);
+//	fMWPCY1 = a->MakeTH1('I', "BM2/MWPCY1", "My new histogram", 32, 0, 32);
+//
+//	fX1MultW = a->MakeTH1('I', "BM2/X1MultW", "Wire multiplicity in the X1 plane", 32, 0, 32);
+//	fY1MultW = a->MakeTH1('I', "BM2/Y1MultW", "Wire multiplicity in the Y1 plane", 32, 0, 32);
+
+	fMWPC[0] = a->MakeTH1('I', "BM2/X1w", "My new histogram", 32, 0, 32);
+	fMWPC[1] = a->MakeTH1('I', "BM2/Y1w", "My new histogram", 32, 0, 32);
+	fMWPC[2] = a->MakeTH1('I', "BM2/X2w", "My new histogram", 32, 0, 32);
+	fMWPC[3] = a->MakeTH1('I', "BM2/Y2w", "My new histogram", 32, 0, 32);
+
+	fMultW[0] = a->MakeTH1('I', "BM2/multX1", "multiplicity x1", 32, 0, 32);
+	fMultW[1] = a->MakeTH1('I', "BM2/multY1", "multiplicity y1", 32, 0, 32);
+	fMultW[2] = a->MakeTH1('I', "BM2/multX2", "multiplicity x2", 32, 0, 32);
+	fMultW[3] = a->MakeTH1('I', "BM2/multY2", "multiplicity y2", 32, 0, 32);
+
 }
 
-UserHistosAdvMonitoring::~UserHistosAdvMonitoring()
+UserHistosBeamMonitoring2::~UserHistosBeamMonitoring2()
 {
 	/**
 	 * Not 100% sure, but it looks as if you do not need to delete your histograms yourself.
@@ -25,7 +40,7 @@ UserHistosAdvMonitoring::~UserHistosAdvMonitoring()
 	 */
 }
 
-void UserHistosAdvMonitoring::GenerateAutoHistos(void)
+/*void UserHistosBeamMonitoring2::GenerateAutoHistos(void)
 {
 	TGo4Analysis* a = TGo4Analysis::Instance();
 
@@ -54,29 +69,28 @@ void UserHistosAdvMonitoring::GenerateAutoHistos(void)
 
 		//TODO check duplicates
 		TString newHistoName;
-		// newHistoName.Form("TestMon/AutoHistos/%d_%s_%s_%d_test", v_statid*100+v_det_ch, v_detector.Data(), v_station.Data(), v_det_ch);
+		// newHistoName.Form("BeamMon/AutoHistos/%d_%s_%s_%d_Beam", v_statid*100+v_det_ch, v_detector.Data(), v_station.Data(), v_det_ch);
 
 
 		Int_t nBins,nLow,nUp;
 		TString stationNameFull;
 		stationNameFull = v_detector + "_" + v_station;
-		// if(stationNameFull.Contains("DAQ")) continue;
-		if(stationNameFull.Contains(fst_MWPC.Data())) {
+		if(v_station == "MWPC1" || v_station == "MWPC2" || v_station == "MWPC3" || v_station == "MWPC4") {
 			// cout << stationNameFull << endl;
 			nBins = 32;
 			nLow = 0;
 			nUp = 31;
-			newHistoName.Form("AdvMon/WIRES/%s", v_station.Data());
+			newHistoName.Form("newhistos/%s/WIRES/%s_new", v_detector.Data(), v_station.Data());
 		}
 		else {
 			nBins = 500;
 			nLow = 0;
 			nUp = 10000;
-			newHistoName.Form("AdvMon/%s/%s/%s_%d", v_detector.Data(), v_station.Data(), v_station.Data(), v_det_ch);
+			newHistoName.Form("newhistos/%s/%s/%s_%d_new", v_detector.Data(), v_station.Data(), v_station.Data(), v_det_ch);
 		}
 		TH1* v_histo = a->MakeTH1('D', newHistoName, newHistoName, nBins, nLow, nUp); //TODO ranges
-		fAutoHistos.insert(std::pair<unsigned int, TH1*>(v_statid*100+v_det_ch, v_histo));
+		fAutoHistos_Beam.insert(std::pair<unsigned int, TH1*>(v_statid*100+v_det_ch, v_histo));
 	}
-}
+}*/
 
-ClassImp(UserHistosAdvMonitoring)
+ClassImp(UserHistosBeamMonitoring2)

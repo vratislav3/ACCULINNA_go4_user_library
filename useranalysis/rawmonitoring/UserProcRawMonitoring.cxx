@@ -11,7 +11,6 @@ using std::endl;
 #include <TH2D.h>
 
 // Project
-#include "base/Support.h"
 #include "unpacking/UserEventUnpacking.h" // input event
 #include "data/RawMessage.h"
 #include "UserHistosRawMonitoring.h"
@@ -29,15 +28,10 @@ UserProcRawMonitoring::UserProcRawMonitoring(const char* name) :
 	fEventCounter(0)
 {
 	fHistoMan = new UserHistosRawMonitoring();
-
-	support::CheckThatDirExists("textoutput");
-
 	fFileSummary = fopen("textoutput/summaryRawMonitoring.txt", "w");
 	if (fFileSummary == NULL) {
-		//TODO warning or fatal?
-		//cerr << "[WARN  ] " << "Could not open output text summary file '" << "summaryRawMonitoring.txt" << "'" << endl;
-		cerr << "[FATAL ] " << "Could not open output text summary file '" << "textoutput/summaryRawMonitoring.txt" << "'" << endl;
-		exit(EXIT_FAILURE);
+		//TODO error
+		cerr << "[WARN  ] " << "Could not open output text summary file '" << "summaryRawMonitoring.txt" << "'" << endl;
 	}
 }
 
