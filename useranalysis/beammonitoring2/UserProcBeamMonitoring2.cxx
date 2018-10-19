@@ -307,6 +307,7 @@ void UserProcBeamMonitoring2::MWPCprojection(DetEventStation* mwpcPlaneX1,
 	Int_t wire[4]; //x1, y1, x2, y2
 
 	Int_t clusterMult[4] = { 0 }; //x1, y1, x2, y2
+	Float_t wireC[4]; //x1, y1, x2, y2
 //	Int_t cluster[4]; //x1, y1, x2, y2
 
 //	vector <Int_t> wireX1;
@@ -356,16 +357,19 @@ void UserProcBeamMonitoring2::MWPCprojection(DetEventStation* mwpcPlaneX1,
 		}
 
 		//filling if wire multiplicity equal to 1
-		if (v_MWPC[i] && wireMult[i]==1 && curTrigger==fParBD->fTriggerCondition) {
+		if (v_MWPC[i] && curTrigger==fParBD->fTriggerCondition) {
 			//add comment here
-			wire[i] = ((DetMessage*)v_MWPC[i]->At(0))->GetStChannel();
-			fHistoMan->fMWPCwire[i]->Fill(wire[i]);
+			if (wireMult[i]==1 ) {
+				wire[i] = ((DetMessage*)v_MWPC[i]->At(0))->GetStChannel();
+				fHistoMan->fMWPCwire[i]->Fill(wire[i]);
+			}
 
-
-		//filling if cluster multiplicity equal to 1
-		// ....
-		// ....
-		// ....
+			//filling if cluster multiplicity equal to 1
+			if (clusterMult[i]==1) {
+				wireC[i] = GetClusterWire(v_MWPC[i]);
+//				cout << wireMult[i] << "\t" << clusterMult[i] << endl;
+				fHistoMan->fMWPCcluster[i]->Fill(wireC[i]);
+			}
 
 		}//if one plane is present
 
@@ -374,44 +378,44 @@ void UserProcBeamMonitoring2::MWPCprojection(DetEventStation* mwpcPlaneX1,
 //	return;
 
 	for (Int_t i = 0; i < 2; i++) {
-		if (v_MWPC[2*i] && v_MWPC[2*i+1] &&
-				wireMult[2*i]==1 && wireMult[2*i+1]==1 &&
-				curTrigger==fParBD->fTriggerCondition) {
+		if (v_MWPC[2*i] && v_MWPC[2*i+1] && curTrigger==fParBD->fTriggerCondition) {
 
-			fHistoMan->fMWPCwireProfile[i]->Fill(wire[2*i], wire[2*i+1]);
+			if (wireMult[2*i]==1 && wireMult[2*i+1]==1) {
+				fHistoMan->fMWPCwireProfile[i]->Fill(wire[2*i], wire[2*i+1]);
+			}
+			if (clusterMult[2*i]==1 && clusterMult[2*i+1]==1) {
+				fHistoMan->fMWPCclusterProfile[i]->Fill(wireC[2*i], wireC[2*i+1]);
+			}
+
 
 		}
 	}
 
 	if (v_MWPC[0] && v_MWPC[1] && v_MWPC[2] && v_MWPC[3] && curTrigger==fParBD->fTriggerCondition) {
 
-		x1p = (wire[0] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepX1 + fParBD->fMWPC1_X_offset;
-		y1p = (wire[1] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepY1 + fParBD->fMWPC1_Y_offset;
+		//wire multiplicity equal to 1
+		if (wireMult[0]==1 && wireMult[1]==1 && wireMult[2]==1 && wireMult[3]==1) {
+			x1p = (wire[0] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepX1 + fParBD->fMWPC1_X_offset;
+			y1p = (wire[1] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepY1 + fParBD->fMWPC1_Y_offset;
 
-		x2p = (wire[2] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepX2 + fParBD->fMWPC2_X_offset;
-		y2p = (wire[3] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepY2 + fParBD->fMWPC2_Y_offset;
+			x2p = (wire[2] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepX2 + fParBD->fMWPC2_X_offset;
+			y2p = (wire[3] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepY2 + fParBD->fMWPC2_Y_offset;
 
-		xt = x1p - (x2p -x1p)*fParBD->fMWPCz1/(fParBD->fMWPCz2-fParBD->fMWPCz1);
-		yt = y1p - (y2p -y1p)*fParBD->fMWPCz1/(fParBD->fMWPCz2-fParBD->fMWPCz1);
+			xt = x1p - (x2p -x1p)*fParBD->fMWPCz1/(fParBD->fMWPCz2-fParBD->fMWPCz1);
+			yt = y1p - (y2p -y1p)*fParBD->fMWPCz1/(fParBD->fMWPCz2-fParBD->fMWPCz1);
 
 
-		fHistoMan->fMWPCmm[0]->Fill(x1p);
-		fHistoMan->fMWPCmm[1]->Fill(y1p);
-		fHistoMan->fMWPCmm[2]->Fill(x2p);
-		fHistoMan->fMWPCmm[3]->Fill(y2p);
+			fHistoMan->fMWPCmm[0]->Fill(x1p);
+			fHistoMan->fMWPCmm[1]->Fill(y1p);
+			fHistoMan->fMWPCmm[2]->Fill(x2p);
+			fHistoMan->fMWPCmm[3]->Fill(y2p);
 
-		fHistoMan->fMWPCProfile[0]->Fill(x1p, y1p);
-		fHistoMan->fMWPCProfile[1]->Fill(x2p, y2p);
-		fHistoMan->fMWPCProfile[2]->Fill(xt, yt);
+			fHistoMan->fMWPCProfile[0]->Fill(x1p, y1p);
+			fHistoMan->fMWPCProfile[1]->Fill(x2p, y2p);
+			fHistoMan->fMWPCProfile[2]->Fill(xt, yt);
+		}
 
 	}
-
-//	for(Int_t i = 0; i < wireMultX1; i++){
-////		DetMessage *mes_MWPCX1 = (DetMessage*)v_MWPCX1->At(i);
-////		wireX1.push_back(mes_MWPCX1->GetStChannel());
-//		((DetMessage*)v_MWPCX1->At(i))->GetStChannel();
-//	}
-
 
 
 }
@@ -454,4 +458,25 @@ Int_t UserProcBeamMonitoring2::GetClusterMult(TClonesArray *data)
 //			<< "clusters:\t" << noclusters << endl << endl;
 
 	return noclusters;
+} //--------------------------------------------------------------------
+
+Float_t UserProcBeamMonitoring2::GetClusterWire(TClonesArray *data)
+{
+	//working correctly only for cluster multiplicity equal to 1
+	//get wire number in, generally, half-numbers, i.e. if cluster
+	//consists from 2 wires n and n+1, cluster position is n+0.5
+
+	Int_t wire1 = ((DetMessage*)data->At(0))->GetStChannel();
+
+	return (Float_t)wire1 + 0.5*((Float_t)data->GetEntriesFast()-1.);
+
+//	if(n == 0) clusters = 0.;
+//	if(n > 0 && n<=32)
+//	{
+//
+////		x2p = (revent->x2[0] + 0.5 - 16)*kMWPCwireStepX2 + MWPC2_X_offset;
+//		position = (x[0]+n/2. + 0.5 -16)*wireStep + planeOffset;
+////		cout << n << endl;
+//	}
+//	return position;
 } //--------------------------------------------------------------------

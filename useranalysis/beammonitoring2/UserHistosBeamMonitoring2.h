@@ -32,12 +32,14 @@ public:
 //	TH1* fY1MultW;		//!
 
 	TH1* fMWPCwire[4];		//!
-	TH1* fMWPCmm[4];		//!
 	TH1* fMultW[4];		//!
-
-	TH1* fMultC[4];		//!
-
 	TH2* fMWPCwireProfile[2];	//!
+
+	TH1* fMWPCcluster[4];		//!
+	TH1* fMultC[4];		//!
+	TH2* fMWPCclusterProfile[2];	//!
+
+	TH1* fMWPCmm[4];		//!
 	TH2* fMWPCProfile[3];	//!
 
 	/**

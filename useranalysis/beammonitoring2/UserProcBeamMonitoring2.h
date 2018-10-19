@@ -49,6 +49,7 @@ private: // methods
 
 	Int_t GetWireMult(TClonesArray *data);
 	Int_t GetClusterMult(TClonesArray *data);
+	Float_t GetClusterWire(TClonesArray *data);
 
  // data members
 	/**

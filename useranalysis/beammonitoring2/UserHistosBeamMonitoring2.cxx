@@ -20,28 +20,36 @@ UserHistosBeamMonitoring2::UserHistosBeamMonitoring2()
 //	fX1MultW = a->MakeTH1('I', "BM2/X1MultW", "Wire multiplicity in the X1 plane", 32, 0, 32);
 //	fY1MultW = a->MakeTH1('I', "BM2/Y1MultW", "Wire multiplicity in the Y1 plane", 32, 0, 32);
 
-	fMWPCwire[0] = a->MakeTH1('I', "BM2/X1w", "My new histogram", 32, 0, 32);
-	fMWPCwire[1] = a->MakeTH1('I', "BM2/Y1w", "My new histogram", 32, 0, 32);
-	fMWPCwire[2] = a->MakeTH1('I', "BM2/X2w", "My new histogram", 32, 0, 32);
-	fMWPCwire[3] = a->MakeTH1('I', "BM2/Y2w", "My new histogram", 32, 0, 32);
+	fMWPCwire[0] = a->MakeTH1('I', "BM2/wires/X1w", "My new histogram", 32, 0, 32);
+	fMWPCwire[1] = a->MakeTH1('I', "BM2/wires/Y1w", "My new histogram", 32, 0, 32);
+	fMWPCwire[2] = a->MakeTH1('I', "BM2/wires/X2w", "My new histogram", 32, 0, 32);
+	fMWPCwire[3] = a->MakeTH1('I', "BM2/wires/Y2w", "My new histogram", 32, 0, 32);
 
 	fMWPCmm[0] = a->MakeTH1('I', "BM2/X1mm", "X1 position in mm", 46, -23., 23.);
 	fMWPCmm[1] = a->MakeTH1('I', "BM2/Y1mm", "Y1 position in mm", 46, -23., 23.);
 	fMWPCmm[2] = a->MakeTH1('I', "BM2/X2mm", "X2 position in mm", 46, -23., 23.);
 	fMWPCmm[3] = a->MakeTH1('I', "BM2/Y2mm", "Y2 position in mm", 46, -23., 23.);
 
-	fMultW[0] = a->MakeTH1('I', "BM2/multX1w", "multiplicity x1", 32, 0, 32);
-	fMultW[1] = a->MakeTH1('I', "BM2/multY1w", "multiplicity y1", 32, 0, 32);
-	fMultW[2] = a->MakeTH1('I', "BM2/multX2w", "multiplicity x2", 32, 0, 32);
-	fMultW[3] = a->MakeTH1('I', "BM2/multY2w", "multiplicity y2", 32, 0, 32);
+	fMultW[0] = a->MakeTH1('I', "BM2/Mult/multX1w", "multiplicity x1", 32, 0, 32);
+	fMultW[1] = a->MakeTH1('I', "BM2/Mult/multY1w", "multiplicity y1", 32, 0, 32);
+	fMultW[2] = a->MakeTH1('I', "BM2/Mult/multX2w", "multiplicity x2", 32, 0, 32);
+	fMultW[3] = a->MakeTH1('I', "BM2/Mult/multY2w", "multiplicity y2", 32, 0, 32);
 
-	fMultC[0] = a->MakeTH1('I', "BM2/multX1c", "multiplicity x1", 32, 0, 32);
-	fMultC[1] = a->MakeTH1('I', "BM2/multY1c", "multiplicity y1", 32, 0, 32);
-	fMultC[2] = a->MakeTH1('I', "BM2/multX2c", "multiplicity x2", 32, 0, 32);
-	fMultC[3] = a->MakeTH1('I', "BM2/multY2c", "multiplicity y2", 32, 0, 32);
+	fMWPCcluster[0] = a->MakeTH1('I', "BM2/wires/X1c", "My new histogram", 32, 0, 32);
+	fMWPCcluster[1] = a->MakeTH1('I', "BM2/wires/Y1c", "My new histogram", 32, 0, 32);
+	fMWPCcluster[2] = a->MakeTH1('I', "BM2/wires/X2c", "My new histogram", 32, 0, 32);
+	fMWPCcluster[3] = a->MakeTH1('I', "BM2/wires/Y2c", "My new histogram", 32, 0, 32);
 
-	fMWPCwireProfile[0] = a->MakeTH2('I', "BM2/XY1wire", "Y1 vs X1: 1 fired wire", 32, 0, 32, 32, 0, 32,"X1","Y1");
-	fMWPCwireProfile[1] = a->MakeTH2('I', "BM2/XY2wire", "Y2 vs X2: 1 fired wire", 32, 0, 32, 32, 0, 32,"X2","Y2");
+	fMultC[0] = a->MakeTH1('I', "BM2/Mult/multX1c", "multiplicity x1", 32, 0, 32);
+	fMultC[1] = a->MakeTH1('I', "BM2/Mult/multY1c", "multiplicity y1", 32, 0, 32);
+	fMultC[2] = a->MakeTH1('I', "BM2/Mult/multX2c", "multiplicity x2", 32, 0, 32);
+	fMultC[3] = a->MakeTH1('I', "BM2/Mult/multY2c", "multiplicity y2", 32, 0, 32);
+
+	fMWPCwireProfile[0] = a->MakeTH2('I', "BM2/wires/XY1wire", "Y1 vs X1: 1 fired wire", 32, 0, 32, 32, 0, 32,"X1","Y1");
+	fMWPCwireProfile[1] = a->MakeTH2('I', "BM2/wires/XY2wire", "Y2 vs X2: 1 fired wire", 32, 0, 32, 32, 0, 32,"X2","Y2");
+
+	fMWPCclusterProfile[0] = a->MakeTH2('I', "BM2/wires/XY1cluster", "Y1 vs X1: 1 fired wire", 32, 0, 32, 32, 0, 32,"X1","Y1");
+	fMWPCclusterProfile[1] = a->MakeTH2('I', "BM2/wires/XY2cluster", "Y2 vs X2: 1 fired wire", 32, 0, 32, 32, 0, 32,"X2","Y2");
 
 	fMWPCProfile[0] = a->MakeTH2('I', "BM2/XY1", "Y1 vs X1: mm", 46, -23., 23., 46, -23., 23.,"X1","Y1");
 	fMWPCProfile[1] = a->MakeTH2('I', "BM2/XY2", "Y2 vs X2: mm", 46, -23., 23., 46, -23., 23.,"X2","Y2");
