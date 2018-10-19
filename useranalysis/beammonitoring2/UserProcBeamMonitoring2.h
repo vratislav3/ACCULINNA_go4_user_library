@@ -18,6 +18,7 @@ class DetMessage;
 class DetEventFull;
 class DetEventStation;
 class UserParameterBeamDetector;
+class TClonesArray;
 
 class UserProcBeamMonitoring2 : public TGo4EventProcessor
 {
@@ -37,9 +38,17 @@ public: // methods
 private: // methods
 	void ProcessMessage(DetMessage* p_message, TString stName);
 
-	void FillMWPC();
+	void FillMWPC(Int_t curTrigger);
+//	void FillMWPC_2D(Int_t curTrigger);
 
-	void MWPCplane(DetEventStation* mwpcPlane, Int_t plane);
+	void MWPCplane(DetEventStation* mwpcPlane, Int_t plane, Int_t curTrigger);
+	void MWPCplane2D(DetEventStation* mwpcPlaneX, DetEventStation* mwpcPlaneY, Int_t plane, Int_t curTrigger);
+	void MWPCprojection(DetEventStation* mwpcPlaneX1, DetEventStation* mwpcPlaneY1,
+			DetEventStation* mwpcPlaneX2, DetEventStation* mwpcPlaneY2,
+			Int_t curTrigger);
+
+	Int_t GetWireMult(TClonesArray *data);
+	Int_t GetClusterMult(TClonesArray *data);
 
  // data members
 	/**
@@ -66,12 +75,6 @@ private: // methods
 	DetEventFull* v_input;
 
 	UserParameterBeamDetector* fParBD;
-
-//	TString fBeamDetName;
-//	TString fMWPCx1Name;
-//	TString fMWPCy1Name;
-//	TString fMWPCx2Name;
-//	TString fMWPCy2Name;
 
 	ClassDef(UserProcBeamMonitoring2, 1);
 };

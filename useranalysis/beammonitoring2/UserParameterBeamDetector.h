@@ -23,12 +23,31 @@ public:
 	UserParameterBeamDetector(const char* name = "BeamDetPar");
 	virtual ~UserParameterBeamDetector() {}
 
-	TString fBeamDetName; // some comment; is it necessary?
+	TString fBeamDetName; 			//name of BeamDetector
 
-	TString fMWPCx1Name;
-	TString fMWPCy1Name;
-	TString fMWPCx2Name;
-	TString fMWPCy2Name;
+	TString fMWPCx1Name;			//name of the X1 plane
+	TString fMWPCy1Name;			//name of the Y1 plane
+	TString fMWPCx2Name;			//name of the X2 plane
+	TString fMWPCy2Name;			//name of the Y2 plane
+
+	Int_t fTriggerCondition;		//trigger condition
+
+//	Float_t fMWPCwireStep[4];
+	Float_t fMWPCwireStepX1;		//step between two wires
+	Float_t fMWPCwireStepY1;		//step between two wires
+	Float_t fMWPCwireStepX2;		//step between two wires
+	Float_t fMWPCwireStepY2;		//step between two wires
+
+	//offsets taken from S. Krupko
+	Float_t fMWPC1_X_offset;
+	Float_t fMWPC1_Y_offset;
+	Float_t fMWPC2_X_offset;
+	Float_t fMWPC2_Y_offset;
+
+	//MWPC
+	Float_t fMWPCz1;	//z coordinate of the center of MWPC1
+	Float_t fMWPCz2;	//z coordinate of the center of MWPC2
+
 
 //private:
 //	TString stationMWPCX1name;
@@ -46,7 +65,7 @@ public:
 	}
 
 	const TString GetStationMWPCx2name() const {
-		return fBeamDetName + "_" + fMWPCx1Name;
+		return fBeamDetName + "_" + fMWPCx2Name;
 	}
 
 	const TString GetStationMWPCy1name() const {
@@ -56,6 +75,9 @@ public:
 	const TString GetStationMWPCy2name() const {
 		return fBeamDetName + "_" + fMWPCy2Name;
 	}
+
+	const Float_t GetWireStep(Int_t plane);
+	const Float_t GetMWPCoffset(Int_t plane);
 };
 
 #endif
