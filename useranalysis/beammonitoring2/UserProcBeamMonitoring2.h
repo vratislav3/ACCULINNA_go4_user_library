@@ -50,12 +50,14 @@ private: // methods
 	Int_t GetWireMult(TClonesArray *data);
 	Int_t GetClusterMult(TClonesArray *data);
 	Float_t GetClusterWire(TClonesArray *data);
+	Float_t GetPosition(Float_t wire, Float_t wireStep, Float_t planeOffset);
 
  // data members
 	/**
 	 * Counter or processed events
 	 */
 	unsigned long int fEventCounter;
+//	unsigned long int fMultW4;
 
 	/**
 	 * Put all your output histograms inside this object.

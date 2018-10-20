@@ -39,8 +39,16 @@ public:
 	TH1* fMultC[4];		//!
 	TH2* fMWPCclusterProfile[2];	//!
 
-	TH1* fMWPCmm[4];		//!
-	TH2* fMWPCProfile[3];	//!
+	TH1* fMWPCmmW[4];		//!
+	TH2* fMWPCProfileW[3];	//!
+
+	TH1* fMWPCmmC[4];		//!
+	TH2* fMWPCProfileC[3];	//!
+
+	TH1* fMWPCwireEff;		//!
+	TH1* fMWPCclusterEff;			//!
+
+//	TH2* fMWPCwireDiagnostics;			//!
 
 	/**
 	 * Automatically generated histograms
