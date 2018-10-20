@@ -38,11 +38,9 @@ public: // methods
 private: // methods
 	void ProcessMessage(DetMessage* p_message, TString stName);
 
-	void FillMWPC(Int_t curTrigger);
-//	void FillMWPC_2D(Int_t curTrigger);
+	void TOF();
 
-	void MWPCplane(DetEventStation* mwpcPlane, Int_t plane, Int_t curTrigger);
-	void MWPCplane2D(DetEventStation* mwpcPlaneX, DetEventStation* mwpcPlaneY, Int_t plane, Int_t curTrigger);
+	void FillMWPC(Int_t curTrigger);
 	void MWPCprojection(DetEventStation* mwpcPlaneX1, DetEventStation* mwpcPlaneY1,
 			DetEventStation* mwpcPlaneX2, DetEventStation* mwpcPlaneY2,
 			Int_t curTrigger);
@@ -57,7 +55,6 @@ private: // methods
 	 * Counter or processed events
 	 */
 	unsigned long int fEventCounter;
-//	unsigned long int fMultW4;
 
 	/**
 	 * Put all your output histograms inside this object.

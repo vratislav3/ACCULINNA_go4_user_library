@@ -13,12 +13,6 @@
 UserHistosBeamMonitoring2::UserHistosBeamMonitoring2()
 {
 	TGo4Analysis* a = TGo4Analysis::Instance();
-//	fTrigger = a->MakeTH1('I', "trigger", "Values of trigger_test",   5, 0., 5.);
-//	fMWPCX1 = a->MakeTH1('I', "BM2/MWPCX1", "My new histogram", 32, 0, 32);
-//	fMWPCY1 = a->MakeTH1('I', "BM2/MWPCY1", "My new histogram", 32, 0, 32);
-//
-//	fX1MultW = a->MakeTH1('I', "BM2/X1MultW", "Wire multiplicity in the X1 plane", 32, 0, 32);
-//	fY1MultW = a->MakeTH1('I', "BM2/Y1MultW", "Wire multiplicity in the Y1 plane", 32, 0, 32);
 
 	fMWPCwire[0] = a->MakeTH1('I', "BM2/wires/X1w", "My new histogram", 32, 0, 32);
 	fMWPCwire[1] = a->MakeTH1('I', "BM2/wires/Y1w", "My new histogram", 32, 0, 32);
@@ -67,8 +61,6 @@ UserHistosBeamMonitoring2::UserHistosBeamMonitoring2()
 	fMWPCwireEff = a->MakeTH1('D', "BM2/wireEff", "Multiplicity 1 in wires", 5, 0, 5);
 	fMWPCclusterEff = a->MakeTH1('D', "BM2/clusterEff", "Multiplicity 1 in clusters", 5, 0, 5);
 
-//	fMWPCwireDiagnostics = a->MakeTH2('D', "BM2/wireDiagnostics", " good title", 5, 0, 5, 5, 0, 5);
-
 }
 
 UserHistosBeamMonitoring2::~UserHistosBeamMonitoring2()
@@ -78,58 +70,5 @@ UserHistosBeamMonitoring2::~UserHistosBeamMonitoring2()
 	 * TGo4AnalysisObjectManager, as part of the singleton TGo4Analysis, will take care.
 	 */
 }
-
-/*void UserHistosBeamMonitoring2::GenerateAutoHistos(void)
-{
-	TGo4Analysis* a = TGo4Analysis::Instance();
-
-	const SetupConfiguration& v_SetupConfig = SetupConfiguration::GetInstance();
-
-	std::map<unsigned int, stc_mapping*> v_mappings = v_SetupConfig.GetMappings();
-	std::map<unsigned int, stc_mapping*>::const_iterator v_mapIter = v_mappings.begin();
-
-	for ( ; v_mapIter != v_mappings.end(); ++v_mapIter) {
-		unsigned int v_uid = v_mapIter->first;
-		//cerr << v_uid << endl;
-
-		unsigned short v_procid = v_SetupConfig.GetProcIdFromUID(v_uid);
-		unsigned short v_addr = v_SetupConfig.GetAddrFromUID(v_uid);
-		unsigned short v_ch = v_SetupConfig.GetElChFromUID(v_uid);
-
-		TString v_station;
-		TString v_detector;
-		TString v_elblock;
-		unsigned short v_detid;
-		unsigned short v_statid;
-		unsigned short v_det_ch = v_SetupConfig.GetOutput(v_procid, v_addr, v_ch, &v_station,
-		                                                  &v_detector, &v_elblock, &v_detid, &v_statid);
-
-		//cerr << v_detector << "(" << v_detid << "): " << v_station << "(" << v_statid << "): " << v_det_ch << endl;
-
-		//TODO check duplicates
-		TString newHistoName;
-		// newHistoName.Form("BeamMon/AutoHistos/%d_%s_%s_%d_Beam", v_statid*100+v_det_ch, v_detector.Data(), v_station.Data(), v_det_ch);
-
-
-		Int_t nBins,nLow,nUp;
-		TString stationNameFull;
-		stationNameFull = v_detector + "_" + v_station;
-		if(v_station == "MWPC1" || v_station == "MWPC2" || v_station == "MWPC3" || v_station == "MWPC4") {
-			// cout << stationNameFull << endl;
-			nBins = 32;
-			nLow = 0;
-			nUp = 31;
-			newHistoName.Form("newhistos/%s/WIRES/%s_new", v_detector.Data(), v_station.Data());
-		}
-		else {
-			nBins = 500;
-			nLow = 0;
-			nUp = 10000;
-			newHistoName.Form("newhistos/%s/%s/%s_%d_new", v_detector.Data(), v_station.Data(), v_station.Data(), v_det_ch);
-		}
-		TH1* v_histo = a->MakeTH1('D', newHistoName, newHistoName, nBins, nLow, nUp); //TODO ranges
-		fAutoHistos_Beam.insert(std::pair<unsigned int, TH1*>(v_statid*100+v_det_ch, v_histo));
-	}
-}*/
 
 ClassImp(UserHistosBeamMonitoring2)

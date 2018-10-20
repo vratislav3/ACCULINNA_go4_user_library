@@ -52,14 +52,6 @@ UserProcBeamMonitoring2::UserProcBeamMonitoring2(const char* name) :
 	}
 
 	fParBD = (UserParameterBeamDetector*)MakeParameter("BeamDetPar", "UserParameterBeamDetector");
-//	fParBD = new UserParameterBeamDetector();
-//	AddParameter(fParBD);
-
-//	fBeamDetName = "Beam_detector";
-//	fMWPCx1Name = "MWPC1";
-//	fMWPCy1Name = "MWPC2";
-//	fMWPCx2Name = "MWPC3";
-//	fMWPCy2Name = "MWPC4";
 }
 
 UserProcBeamMonitoring2::~UserProcBeamMonitoring2()
@@ -165,7 +157,6 @@ ClassImp(UserProcBeamMonitoring2)
 
 void UserProcBeamMonitoring2::FillMWPC(Int_t curTrigger) {
 
-//	DetEventStation* st_MWPCX1 = (DetEventStation*)(v_input->getEventElement(fParBD->stationMWPCX1name.Data(),1));
 	DetEventStation* st_MWPCX1 = (DetEventStation*)(v_input->getEventElement(fParBD->GetStationMWPCx1name().Data(),1));
 	if(!st_MWPCX1) {
 		cout << " station " << fParBD->GetStationMWPCx1name() << " was not found in event " << fEventCounter << endl;
@@ -186,109 +177,10 @@ void UserProcBeamMonitoring2::FillMWPC(Int_t curTrigger) {
 		cout << " station " << fParBD->GetStationMWPCy2name() << " was not found in event " << fEventCounter << endl;
 	}
 
-//	vector <Int_t> nx1;
-//	Int_t mx1 = 0;
-
-//	if (st_MWPCX1) {
-//		MWPCplane(st_MWPCX1, 0, curTrigger);
-//	}
-//
-//	if (st_MWPCY1) {
-//		MWPCplane(st_MWPCY1, 1, curTrigger);
-//	}
-//	if (st_MWPCX2) {
-//		MWPCplane(st_MWPCX2, 2, curTrigger);
-//	}
-//	if (st_MWPCY2) {
-//		MWPCplane(st_MWPCY2, 3, curTrigger);
-//	}
-//
-//	if  (st_MWPCX1 && st_MWPCY1) {
-//		MWPCplane2D(st_MWPCX1, st_MWPCY1, 0, curTrigger);
-//	}
-//
-//	if  (st_MWPCX2 && st_MWPCY2) {
-//		MWPCplane2D(st_MWPCX2, st_MWPCY2, 1, curTrigger);
-//	}
-
-//	if (st_MWPCX1 && st_MWPCY1 && st_MWPCX2 && st_MWPCY2) {
 	MWPCprojection(st_MWPCX1, st_MWPCY1, st_MWPCX2, st_MWPCY2, curTrigger);
-//	}
+
 
 	return;
-
-}
-
-void UserProcBeamMonitoring2::MWPCplane(DetEventStation* mwpcPlane, Int_t plane, Int_t curTrigger) {
-
-	Int_t wireMult = 0;
-	vector <Int_t> wire;
-
-	TClonesArray* v_MWPC1 = mwpcPlane->GetDetMessages();
-	wireMult = v_MWPC1->GetEntriesFast();
-
-	if (curTrigger==fParBD->fTriggerCondition) {
-		fHistoMan->fMultW[plane]->Fill(wireMult);
-	}
-
-	for(Int_t i = 0; i < wireMult; i++){
-		DetMessage *mes_MWPC1 = (DetMessage*)v_MWPC1->At(i);
-		wire.push_back(mes_MWPC1->GetStChannel());
-	}
-
-	if (wireMult==1 && curTrigger==fParBD->fTriggerCondition) {
-//		fHistoMan->fMWPC[plane]->Fill(wire.at(0));
-//		((DetMessage*)v_MWPC1->At(i))->GetStChannel();
-		((DetMessage*)v_MWPC1->At(0))->GetStChannel();
-		fHistoMan->fMWPCwire[plane]->Fill( ((DetMessage*)v_MWPC1->At(0))->GetStChannel() );
-//		if (plane == 0) {
-//			fHistoMan->fMWPCmm[plane]->Fill( (wire.at(0) + 0.5 - 16)*fParBD->fMWPCwireStepX1 + fParBD->fMWPC1_X_offset);
-//			Float_t coordinate
-//			= (wire.at(0) + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->GetWireStep(plane)
-//			+ fParBD->GetMWPCoffset(plane);
-//			fHistoMan->fMWPCmm[plane]->Fill(coordinate);
-//		}
-
-
-
-
-	}
-}
-
-void UserProcBeamMonitoring2::MWPCplane2D(DetEventStation* mwpcPlaneX,
-		DetEventStation* mwpcPlaneY, Int_t plane, Int_t curTrigger)
-{
-
-	Int_t wireMultX = 0;
-	Int_t wireMultY = 0;
-	vector <Int_t> wireX;
-	vector <Int_t> wireY;
-
-	TClonesArray* v_MWPCX = mwpcPlaneX->GetDetMessages();
-	wireMultX = v_MWPCX->GetEntriesFast();
-
-	TClonesArray* v_MWPCY = mwpcPlaneY->GetDetMessages();
-	wireMultY = v_MWPCY->GetEntriesFast();
-
-//	if (curTrigger==fParBD->fTriggerCondition) {
-//		fHistoMan->fMultW[planeX]->Fill(wireMultX);
-//	}
-
-	for(Int_t i = 0; i < wireMultX; i++){
-		DetMessage *mes_MWPCX = (DetMessage*)v_MWPCX->At(i);
-		wireX.push_back(mes_MWPCX->GetStChannel());
-	}
-
-	for(Int_t i = 0; i < wireMultY; i++){
-		DetMessage *mes_MWPCY = (DetMessage*)v_MWPCY->At(i);
-		wireY.push_back(mes_MWPCY->GetStChannel());
-	}
-
-	if (wireMultX==1 && wireMultY==1 && curTrigger==fParBD->fTriggerCondition) {
-//		fHistoMan->fMWPC[plane]->Fill(wire.at(0));
-		fHistoMan->fMWPCwireProfile[plane]->Fill(wireX.at(0), wireY.at(0));
-
-	}
 
 }
 
@@ -300,47 +192,29 @@ void UserProcBeamMonitoring2::MWPCprojection(DetEventStation* mwpcPlaneX1,
 	Float_t x1p, y1p, x2p, y2p, xtw, ytw;
 	Float_t x1c, y1c, x2c, y2c, xtc, ytc;
 
-//	Int_t wireMultX1 = 0;
-//	Int_t wireMultY1 = 0;
-//	Int_t wireMultX2 = 0;
-//	Int_t wireMultY2 = 0;
-
 	Int_t wireMult[4] = { 0 }; //x1, y1, x2, y2
 	Int_t wire[4]; //x1, y1, x2, y2
 
 	Int_t clusterMult[4] = { 0 }; //x1, y1, x2, y2
 	Float_t wireC[4]; //x1, y1, x2, y2
-//	Int_t cluster[4]; //x1, y1, x2, y2
 
-//	vector <Int_t> wireX1;
-//	vector <Int_t> wireY1;
-//	vector <Int_t> wireX2;
-//	vector <Int_t> wireY2;
 
 	TClonesArray* v_MWPC[4] = { NULL };	//x1, y1, x2, y2
-//	for (Int_t i = 0; i < 4; i++) {
-//		v_MWPC[i] = NULL;
-//	}
-
-//	return;
 
 	if (mwpcPlaneX1) {
 		v_MWPC[0] = mwpcPlaneX1->GetDetMessages();
-//		wireMult[0] = v_MWPC[0]->GetEntriesFast();
 		wireMult[0] = GetWireMult(v_MWPC[0]);
 		clusterMult[0] = GetClusterMult(v_MWPC[0]);
 	}
 
 	if (mwpcPlaneY1) {
 		v_MWPC[1] = mwpcPlaneY1->GetDetMessages();
-//		wireMult[1] = v_MWPC[1]->GetEntriesFast();
 		wireMult[1] = GetWireMult(v_MWPC[1]);
 		clusterMult[1] = GetClusterMult(v_MWPC[1]);
 	}
 
 	if (mwpcPlaneX2) {
 		v_MWPC[2] = mwpcPlaneX2->GetDetMessages();
-//		wireMult[2] = v_MWPC[2]->GetEntriesFast();
 		wireMult[2] = GetWireMult(v_MWPC[2]);
 		clusterMult[2] = GetClusterMult(v_MWPC[2]);
 	}
@@ -352,14 +226,6 @@ void UserProcBeamMonitoring2::MWPCprojection(DetEventStation* mwpcPlaneX1,
 		clusterMult[3] = GetClusterMult(v_MWPC[3]);
 	}
 
-	if (wireMult[0]==1 && wireMult[1]==1 && wireMult[2]==1 && wireMult[3]==1) {
-//	if (clusterMult[0]==1 && clusterMult[1]==1 && clusterMult[2]==1 && clusterMult[3]==1) {
-//		fMultW4++;
-//		cout << (Double_t)fMultW4/(Double_t)fEventCounter << endl;
-//		fHistoMan->fMWPCwireEff->SetBinContent(2, fMultW4/fEventCounter);
-//		fHistoMan->fMWPCwireEff->Fill(3, 1./fEventCounter);
-	}
-
 	Int_t noCorrPlanesW = 0;
 	Int_t noCorrPlanesC = 0;
 
@@ -369,11 +235,6 @@ void UserProcBeamMonitoring2::MWPCprojection(DetEventStation* mwpcPlaneX1,
 	}
 	fHistoMan->fMWPCwireEff->Fill(noCorrPlanesW);
 	fHistoMan->fMWPCclusterEff->Fill(noCorrPlanesC);
-
-//	for (Int_t i = 0; i < 4; i++) {
-////		if (wireMult[i]==1) fHistoMan->fMWPCwireDiagnostics->Fill(i, noCorrPlanesW);
-////		if (clusterMult[i]==1) noCorrPlanesC++;
-//	}
 
 	for (Int_t i = 0; i < 4; i++) {
 		if (curTrigger==fParBD->fTriggerCondition) {
@@ -392,15 +253,12 @@ void UserProcBeamMonitoring2::MWPCprojection(DetEventStation* mwpcPlaneX1,
 			//filling if cluster multiplicity equal to 1
 			if (clusterMult[i]==1) {
 				wireC[i] = GetClusterWire(v_MWPC[i]);
-//				cout << wireMult[i] << "\t" << clusterMult[i] << endl;
 				fHistoMan->fMWPCcluster[i]->Fill(wireC[i]);
 			}
-
 		}//if one plane is present
 
 	}
 
-//	return;
 
 	for (Int_t i = 0; i < 2; i++) {
 		if (v_MWPC[2*i] && v_MWPC[2*i+1] && curTrigger==fParBD->fTriggerCondition) {
@@ -422,11 +280,6 @@ void UserProcBeamMonitoring2::MWPCprojection(DetEventStation* mwpcPlaneX1,
 
 		//wire multiplicity equal to 1
 		if (wireMult[0]==1 && wireMult[1]==1 && wireMult[2]==1 && wireMult[3]==1) {
-//			x1p = (wire[0] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepX1 + fParBD->fMWPC1_X_offset;
-//			y1p = (wire[1] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepY1 + fParBD->fMWPC1_Y_offset;
-//
-//			x2p = (wire[2] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepX2 + fParBD->fMWPC2_X_offset;
-//			y2p = (wire[3] + gRandom->Uniform(-0.5, 0.5) + 0.5 - 16)*fParBD->fMWPCwireStepY2 + fParBD->fMWPC2_Y_offset;
 			x1p = GetPosition(wire[0], fParBD->fMWPCwireStepX1, fParBD->fMWPC1_X_offset);
 			y1p = GetPosition(wire[1], fParBD->fMWPCwireStepY1, fParBD->fMWPC1_Y_offset);
 
@@ -509,9 +362,6 @@ Int_t UserProcBeamMonitoring2::GetClusterMult(TClonesArray *data)
 		if ( abs(wire1 - wire2) > 1 && abs(wire1 - wire2) < 32) noclusters++;
 	}
 
-//	cout << endl
-//			<< "clusters:\t" << noclusters << endl << endl;
-
 	return noclusters;
 } //--------------------------------------------------------------------
 
@@ -525,16 +375,8 @@ Float_t UserProcBeamMonitoring2::GetClusterWire(TClonesArray *data)
 
 	return (Float_t)wire1 + 0.5*((Float_t)data->GetEntriesFast()-1.);
 
-//	if(n == 0) clusters = 0.;
-//	if(n > 0 && n<=32)
-//	{
-//
-////		x2p = (revent->x2[0] + 0.5 - 16)*kMWPCwireStepX2 + MWPC2_X_offset;
-//		position = (x[0]+n/2. + 0.5 -16)*wireStep + planeOffset;
-////		cout << n << endl;
-//	}
-//	return position;
 } //--------------------------------------------------------------------
+
 
 Float_t UserProcBeamMonitoring2::GetPosition(Float_t wire, Float_t wireStep,
 		Float_t planeOffset) {

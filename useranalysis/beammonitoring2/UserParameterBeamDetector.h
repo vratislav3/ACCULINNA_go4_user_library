@@ -49,14 +49,6 @@ public:
 	Float_t fMWPCz2;	//z coordinate of the center of MWPC2
 
 
-//private:
-//	TString stationMWPCX1name;
-
-//public:
-//	TString stationMWPCY1name;
-//	TString stationMWPCX2name;
-//	TString stationMWPCY2name;
-
 	ClassDef(UserParameterBeamDetector,1)
 
 	const TString GetStationMWPCx1name() const {

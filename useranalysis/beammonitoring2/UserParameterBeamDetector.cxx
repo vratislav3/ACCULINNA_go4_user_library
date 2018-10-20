@@ -38,11 +38,6 @@ UserParameterBeamDetector::UserParameterBeamDetector(const char* name) :
 	fMWPCz1 = -815.;	//z coordinate of the center of MWPC1
 	fMWPCz2 = -270.;	//z coordinate of the center of MWPC2
 
-//	stationMWPCX1name.Form("%s_%s", fBeamDetName.Data(), fMWPCx1Name.Data());
-//	stationMWPCY1name.Form("%s_%s", fBeamDetName.Data(), fMWPCy1Name.Data());
-//	stationMWPCX2name.Form("%s_%s", fBeamDetName.Data(), fMWPCx2Name.Data());
-//	stationMWPCY2name.Form("%s_%s", fBeamDetName.Data(), fMWPCy2Name.Data());
-
 }
 
 const Float_t UserParameterBeamDetector::GetWireStep(Int_t plane) {

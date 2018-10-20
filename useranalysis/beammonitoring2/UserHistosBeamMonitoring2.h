@@ -24,13 +24,6 @@ public:
 
 //	void GenerateAutoHistos(void);
 
-//	TH1* fTrigger;		//!
-//	TH1* fMWPCX1;		//!
-//	TH1* fMWPCY1;		//!
-//
-//	TH1* fX1MultW;		//!
-//	TH1* fY1MultW;		//!
-
 	TH1* fMWPCwire[4];		//!
 	TH1* fMultW[4];		//!
 	TH2* fMWPCwireProfile[2];	//!
@@ -47,8 +40,6 @@ public:
 
 	TH1* fMWPCwireEff;		//!
 	TH1* fMWPCclusterEff;			//!
-
-//	TH2* fMWPCwireDiagnostics;			//!
 
 	/**
 	 * Automatically generated histograms
