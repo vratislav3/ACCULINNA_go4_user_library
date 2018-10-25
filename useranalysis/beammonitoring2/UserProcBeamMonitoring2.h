@@ -38,9 +38,9 @@ public: // methods
 private: // methods
 	void ProcessMessage(DetMessage* p_message, TString stName);
 
-	void TOF();
+	void TOF(DetEventStation* F3a, DetEventStation* F5a, DetEventStation* F3t, DetEventStation* F5t, Int_t curTrigger);
 
-	void FillMWPC(Int_t curTrigger);
+	void FillHistograms(Int_t curTrigger);
 	void MWPCprojection(DetEventStation* mwpcPlaneX1, DetEventStation* mwpcPlaneY1,
 			DetEventStation* mwpcPlaneX2, DetEventStation* mwpcPlaneY2,
 			Int_t curTrigger);

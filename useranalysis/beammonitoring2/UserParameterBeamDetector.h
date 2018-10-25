@@ -30,7 +30,17 @@ public:
 	TString fMWPCx2Name;			//name of the X2 plane
 	TString fMWPCy2Name;			//name of the Y2 plane
 
+	TString fF3aName;				//name of amplitudes in F3
+	TString fF5aName;				//name of amplitudes in F5
+	TString fF3tName;				//name of time in F3
+	TString fF5tName;				//name of time in F5
+
 	Int_t fTriggerCondition;		//trigger condition
+
+	Int_t fNoPMTf3;					//number of working PMT's in F3
+	Int_t fNoPMTf5;					//number of working PMT's in F3
+	Float_t fTimeCal;				//calibration parameter used for Fx TDC's
+	Float_t fTOFconst;				//calibration constant for TOF in ns
 
 //	Float_t fMWPCwireStep[4];
 	Float_t fMWPCwireStepX1;		//step between two wires
@@ -66,6 +76,22 @@ public:
 
 	const TString GetStationMWPCy2name() const {
 		return fBeamDetName + "_" + fMWPCy2Name;
+	}
+
+	TString GetF3aName() {
+		return fBeamDetName + "_" + fF3aName;
+	}
+
+	TString GetF5aName() {
+		return fBeamDetName + "_" + fF5aName;
+	}
+
+	TString GetF3tName() {
+		return fBeamDetName + "_" + fF3tName;
+	}
+
+	TString GetF5tName() {
+		return fBeamDetName + "_" + fF5tName;
 	}
 
 	const Float_t GetWireStep(Int_t plane);

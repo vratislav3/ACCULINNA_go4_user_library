@@ -43,6 +43,9 @@ UserProcBeamMonitoring2::UserProcBeamMonitoring2(const char* name) :
 	fSetupConfig(0),
 	v_input(0)
 {
+	//todo rename parameter class
+	fParBD = (UserParameterBeamDetector*)MakeParameter("BeamDetPar", "UserParameterBeamDetector");
+
 	fHistoMan = new UserHistosBeamMonitoring2();
 	// cerr << " UserProcBeamMonitoring CALLED !!! ## &Y$@!UHNEFJNASJDf " << endl;
 	fFileSummary = fopen("textoutput/summaryBeamMonitoring.txt", "w");
@@ -50,8 +53,6 @@ UserProcBeamMonitoring2::UserProcBeamMonitoring2(const char* name) :
 		//TODO error
 		cerr << "[WARN  ] " << "Could not open output text summary file '" << "summaryBeamMonitoring.txt" << "'" << endl;
 	}
-
-	fParBD = (UserParameterBeamDetector*)MakeParameter("BeamDetPar", "UserParameterBeamDetector");
 }
 
 UserProcBeamMonitoring2::~UserProcBeamMonitoring2()
@@ -113,7 +114,7 @@ Bool_t UserProcBeamMonitoring2::BuildEvent(TGo4EventElement* p_dest)
 //	filling my own histograms
 //////////////////////////////////////
 
-	FillMWPC(trigger);
+	FillHistograms(trigger);
 
 //////////////////////////////////////
 //	filling my own histograms
@@ -155,7 +156,36 @@ void UserProcBeamMonitoring2::ProcessMessage(DetMessage* p_message, TString stNa
 
 ClassImp(UserProcBeamMonitoring2)
 
-void UserProcBeamMonitoring2::FillMWPC(Int_t curTrigger) {
+void UserProcBeamMonitoring2::FillHistograms(Int_t curTrigger) {
+
+	//TOF
+//	DetEventStation* st_F3a = (DetEventStation*)(v_input->getEventElement("Beam_detector_F3",1));
+	DetEventStation* st_F3a = (DetEventStation*)(v_input->getEventElement(fParBD->GetF3aName(),1));
+	if(!st_F3a) {
+		cout << " station " << fParBD->GetF3aName() << " was not found in event " << fEventCounter << endl;
+	}
+
+//	DetEventStation* st_F5a = (DetEventStation*)(v_input->getEventElement("Beam_detector_F5",1));
+	DetEventStation* st_F5a = (DetEventStation*)(v_input->getEventElement(fParBD->GetF5aName(),1));
+	if(!st_F5a) {
+		cout << " station " << fParBD->GetF5aName() << " was not found in event " << fEventCounter << endl;
+	}
+
+//	DetEventStation* st_F3t = (DetEventStation*)(v_input->getEventElement("Beam_detector_tF3",1));
+	DetEventStation* st_F3t = (DetEventStation*)(v_input->getEventElement(fParBD->GetF3tName(),1));
+	if(!st_F3t) {
+		cout << " station " << fParBD->GetF3tName() << " was not found in event " << fEventCounter << endl;
+	}
+
+//	DetEventStation* st_F5t = (DetEventStation*)(v_input->getEventElement("Beam_detector_tF5",1));
+	DetEventStation* st_F5t = (DetEventStation*)(v_input->getEventElement(fParBD->GetF5tName(),1));
+	if(!st_F5t) {
+		cout << " station " << fParBD->GetF5tName() << " was not found in event " << fEventCounter << endl;
+	}
+
+	TOF(st_F3a, st_F5a, st_F3t, st_F5t, curTrigger);
+
+	//MWPC
 
 	DetEventStation* st_MWPCX1 = (DetEventStation*)(v_input->getEventElement(fParBD->GetStationMWPCx1name().Data(),1));
 	if(!st_MWPCX1) {
@@ -178,7 +208,6 @@ void UserProcBeamMonitoring2::FillMWPC(Int_t curTrigger) {
 	}
 
 	MWPCprojection(st_MWPCX1, st_MWPCY1, st_MWPCX2, st_MWPCY2, curTrigger);
-
 
 	return;
 
@@ -274,7 +303,7 @@ void UserProcBeamMonitoring2::MWPCprojection(DetEventStation* mwpcPlaneX1,
 		}
 	}
 
-
+//	return;
 
 	if (v_MWPC[0] && v_MWPC[1] && v_MWPC[2] && v_MWPC[3] && curTrigger==fParBD->fTriggerCondition) {
 
@@ -312,7 +341,7 @@ void UserProcBeamMonitoring2::MWPCprojection(DetEventStation* mwpcPlaneX1,
 			xtc = x1c - (x2c -x1c)*fParBD->fMWPCz1/(fParBD->fMWPCz2-fParBD->fMWPCz1);
 			ytc = y1c - (y2c -y1c)*fParBD->fMWPCz1/(fParBD->fMWPCz2-fParBD->fMWPCz1);
 
-			cout <<
+//			cout <<
 			fHistoMan->fMWPCmmC[0]->Fill(x1c);
 			fHistoMan->fMWPCmmC[1]->Fill(y1c);
 			fHistoMan->fMWPCmmC[2]->Fill(x2c);
@@ -324,7 +353,6 @@ void UserProcBeamMonitoring2::MWPCprojection(DetEventStation* mwpcPlaneX1,
 		}//if cluster multiplicity equal to 1
 
 	}
-
 
 }
 
@@ -377,6 +405,91 @@ Float_t UserProcBeamMonitoring2::GetClusterWire(TClonesArray *data)
 
 } //--------------------------------------------------------------------
 
+void UserProcBeamMonitoring2::TOF(DetEventStation* F3a, DetEventStation* F5a,
+		DetEventStation* F3t, DetEventStation* F5t,
+		Int_t curTrigger) {
+
+
+	TClonesArray* v_F3a = NULL;	//x1, y1, x2, y2
+	TClonesArray* v_F5a = NULL;	//x1, y1, x2, y2
+	TClonesArray* v_F3t = NULL;	//x1, y1, x2, y2
+	TClonesArray* v_F5t = NULL;	//x1, y1, x2, y2
+
+	Int_t F3MultA = 0;
+	Int_t F5MultA = 0;
+	Int_t F3MultT = 0;
+	Int_t F5MultT = 0;
+
+	if (F3a) {
+		v_F3a = F3a->GetDetMessages();
+		F3MultA = v_F3a->GetEntriesFast();
+	}
+
+	if (F5a) {
+		v_F5a = F5a->GetDetMessages();
+		F5MultA = v_F5a->GetEntriesFast();
+	}
+
+	if (F3t) {
+		v_F3t = F3t->GetDetMessages();
+		F3MultT = v_F3t->GetEntriesFast();
+	}
+
+	if (F5t) {
+		v_F5t = F5t->GetDetMessages();
+		F5MultT = v_F5t->GetEntriesFast();
+	}
+
+	if (curTrigger==fParBD->fTriggerCondition) {
+		fHistoMan->fF3MultA->Fill(F3MultA);
+		fHistoMan->fF5MultA->Fill(F5MultA);
+		fHistoMan->fF3MultT->Fill(F3MultT);
+		fHistoMan->fF5MultT->Fill(F5MultT);
+	}
+
+	//todo: should we initialize them?
+	Float_t dEbeam = 0.;
+	Float_t TOF = 0.;
+
+	//todo: number of PMT's as parameter
+//	const Int_t noPMTf3 = 4;
+//	const Int_t noPMTf5 = 4;
+//	const Float_t timeCal = 0.125;
+//	const Float_t constTOF = 89.165;
+
+
+	if (curTrigger==fParBD->fTriggerCondition) {
+
+		if (F5MultA == fParBD->fNoPMTf5) {
+			for (Int_t i = 0; i < fParBD->fNoPMTf5; i++) {
+				dEbeam += ((DetMessage*)v_F5a->At(i))->GetValue();
+			}
+			dEbeam = dEbeam/(Float_t)fParBD->fNoPMTf5;
+			fHistoMan->fdE->Fill(dEbeam);
+		}
+
+		if (F3MultT == fParBD->fNoPMTf3 && F5MultT == fParBD->fNoPMTf5) {
+			Float_t timeF3, timeF5;
+			for (Int_t i = 0; i < fParBD->fNoPMTf3; i++) {
+				timeF3 = ((DetMessage*)v_F3t->At(i))->GetValue();
+			}
+			timeF3 = timeF3/(Float_t)fParBD->fNoPMTf3;
+
+			for (Int_t i = 0; i < fParBD->fNoPMTf5; i++) {
+				timeF5 = ((DetMessage*)v_F5t->At(i))->GetValue();
+			}
+			timeF5 = timeF5/(Float_t)fParBD->fNoPMTf5;
+
+			TOF = (timeF5 - timeF3)*fParBD->fTimeCal + fParBD->fTOFconst;
+			fHistoMan->fTOF->Fill(TOF);
+		}
+
+		if (F5MultA == fParBD->fNoPMTf5 && F3MultT == fParBD->fNoPMTf3 && F5MultT == fParBD->fNoPMTf5) {
+			fHistoMan->fTOF_ID->Fill(TOF, dEbeam);
+		}
+
+	}//if current trigger
+}
 
 Float_t UserProcBeamMonitoring2::GetPosition(Float_t wire, Float_t wireStep,
 		Float_t planeOffset) {
