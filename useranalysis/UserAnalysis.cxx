@@ -10,6 +10,7 @@ using std::endl;
 #include <TGo4Version.h> // for CheckVersion
 #include <TGo4StepFactory.h>
 #include <TGo4MbsEvent.h>
+////#include <../Go4Http/TGo4Sniffer.h>
 
 // Project
 #include "UserParameter.h"
@@ -57,6 +58,14 @@ UserAnalysis::UserAnalysis(int argc, char** argv) :
 
 	this->Construct(argv[1], argv[2]);
 	cout << "UserAnalysis constructed 2." << endl;
+
+	//TODO check that 'setup.C' exists!
+	ExecuteScript("setup.C");
+
+	//// Unfortunately this does not work in the constructor
+	////Bool_t isbatch = ((TGo4Analysis::Instance()->GetAnalysisClient() != 0) ? kFALSE : kTRUE);
+	////cout << "isbatch = " << isbatch << endl;
+
 }
 
 UserAnalysis::~UserAnalysis()
@@ -74,6 +83,7 @@ void UserAnalysis::Construct(TString p_outfilename, TString p_setupfilename)
 	mParams = new UserParameter();
 	mParams->SetInputFilename(this->GetInputFileName());
 	mParams->SetSetupConfigFilename(p_setupfilename);
+	mParams->SetElectrCharsFilename("usr/electronics2.xml"); //FIXME hardcode
 	mParams->SetOutputFilename(p_outfilename);
 	mParams->Init(); //TODO User function to perform XML import. Probably there should be a more nice way to do this.
 	AddParameter(mParams);
@@ -146,7 +156,7 @@ void UserAnalysis::Construct(TString p_outfilename, TString p_setupfilename)
 	stepUnpackedProvider2->SetProcessEnabled(kTRUE);
 	AddAnalysisStep(stepUnpackedProvider2);
 
-	// // STEP2.2 - processor - learn ==================================================================
+	// STEP2.2 - processor - learn ==================================================================
 
 	TGo4StepFactory* factoryLearn = new TGo4StepFactory("factoryLearn");
 	//factoryLearn->DefInputEvent("UserEventUnpacking1", "UserEventUnpacking"); // object name, class name
@@ -178,7 +188,7 @@ void UserAnalysis::Construct(TString p_outfilename, TString p_setupfilename)
 	stepUnpackedProvider3->SetProcessEnabled(kTRUE);
 	AddAnalysisStep(stepUnpackedProvider3);
 
-	// // STEP2.3 - processor - raw monitoring =============================================================
+	// STEP2.3 - processor - raw monitoring =============================================================
 
 	TGo4StepFactory* factoryRawMonitoring = new TGo4StepFactory("factoryRawMonitoring");
 	//factoryRawMonitoring->DefInputEvent("UserEventUnpacking1", "UserEventUnpacking"); // object name, class name
@@ -211,7 +221,7 @@ void UserAnalysis::Construct(TString p_outfilename, TString p_setupfilename)
 	stepRepackedProvider1->SetProcessEnabled(kTRUE);
 	AddAnalysisStep(stepRepackedProvider1);
 
-	// // STEP3.1 - processor - advanced monitoring =============================================================
+	// STEP3.1 - processor - advanced monitoring =============================================================
 
 	TGo4StepFactory* factoryAdvMonitoring = new TGo4StepFactory("factoryAdvMonitoring");
 	//factoryAdvMonitoring->DefInputEvent("DetEventFull1", "DetEventFull"); // object name, class name
@@ -230,33 +240,43 @@ void UserAnalysis::Construct(TString p_outfilename, TString p_setupfilename)
 	stepAdvMonitoring->SetStoreEnabled(kFALSE);
 
 	AddAnalysisStep(stepAdvMonitoring);
+//*/
+	// STEP3.2 - provider - beam detector monitoring ===============================================================
+//TODO remove two leading slashes in the following line to disable this step
+///*
+	TGo4StepFactory* factoryRepackedProvider2 = new TGo4StepFactory("factoryRepackedProvider2");
+	factoryRepackedProvider2->DefInputEvent("DetEventFull1", "DetEventFull"); // read full raw event without partial io
+	factoryRepackedProvider2->DefEventProcessor("DetEventFull1_2","MeshProviderProc"); // processorname must match name of input event + "_"
+	factoryRepackedProvider2->DefOutputEvent("Dummy", "MeshDummyEvent");
+	TGo4AnalysisStep* stepRepackedProvider2 = new TGo4AnalysisStep("stepRepackedProvider2", factoryRepackedProvider2);
+	stepRepackedProvider2->SetSourceEnabled(kFALSE);
+	stepRepackedProvider2->SetStoreEnabled(kFALSE);
+	stepRepackedProvider2->SetProcessEnabled(kTRUE);
+	AddAnalysisStep(stepRepackedProvider2);
 
-// STEP3.2 - processor - test monitoring =============================================================
+	// STEP3.2 - processor - beam detector monitoring =============================================================
 
-	// TGo4StepFactory* factoryTestMonitoring = new TGo4StepFactory("factoryTestMonitoring");
-	// //factoryAdvMonitoring->DefInputEvent("DetEventFull1", "DetEventFull"); // object name, class name
-	// factoryTestMonitoring->DefEventProcessor("UserProcTestMonitoring1", "UserProcTestMonitoring"); // object name, class name
-	// factoryTestMonitoring->DefOutputEvent("UserEventTestMonitoring1", "UserEventTestMonitoring"); // object name, class name
+	TGo4StepFactory* factoryBeamDetMonitoring = new TGo4StepFactory("factoryBeamDetMonitoring");
+	//factoryBeamDetMonitoring->DefInputEvent("DetEventFull1", "DetEventFull"); // object name, class name
+	factoryBeamDetMonitoring->DefEventProcessor("UserProcBeamDetMonitoring1", "UserProcBeamDetMonitoring"); // object name, class name
+	factoryBeamDetMonitoring->DefOutputEvent("UserEventBeamDetMonitoring1", "UserEventBeamDetMonitoring"); // object name, class name
 
-	// TGo4AnalysisStep* stepTestMonitoring = new TGo4AnalysisStep("stepTestMonitoring", factoryTestMonitoring);
+	TGo4AnalysisStep* stepBeamDetMonitoring = new TGo4AnalysisStep("stepBeamDetMonitoring", factoryBeamDetMonitoring);
 
-	// stepTestMonitoring->SetSourceEnabled(kFALSE);
-	// stepTestMonitoring->SetProcessEnabled(kTRUE);
-	// stepTestMonitoring->SetErrorStopEnabled(kFALSE);
+	stepBeamDetMonitoring->SetSourceEnabled(kFALSE);
+	stepBeamDetMonitoring->SetProcessEnabled(kTRUE);
+	stepBeamDetMonitoring->SetErrorStopEnabled(kFALSE);
+	stepBeamDetMonitoring->SetStoreEnabled(kFALSE);
 
-	// //TGo4FileStoreParameter* storeAdvMonitoring = new TGo4FileStoreParameter("advmonitoring.root"); //TODO
-	// //stepAdvMonitoring->SetEventStore(storeAdvMonitoring);
-	// //stepAdvMonitoring->SetStoreEnabled(kTRUE);
-	// stepTestMonitoring->SetStoreEnabled(kFALSE);
+	AddAnalysisStep(stepBeamDetMonitoring);
+//*/
 
-	// AddAnalysisStep(stepTestMonitoring);
-
-	// STEP3.5 - provider - beam monitoring 2 ===============================================================
+// STEP3.3 - provider - beam detector monitoring ===============================================================
 //TODO remove two leading slashes in the following line to disable this step
 ///*
 	TGo4StepFactory* factoryRepackedProvider3 = new TGo4StepFactory("factoryRepackedProvider3");
 	factoryRepackedProvider3->DefInputEvent("DetEventFull1", "DetEventFull"); // read full raw event without partial io
-	factoryRepackedProvider3->DefEventProcessor("DetEventFull1_1","MeshProviderProc"); // processorname must match name of input event + "_"
+	factoryRepackedProvider3->DefEventProcessor("DetEventFull1_2","MeshProviderProc"); // processorname must match name of input event + "_"
 	factoryRepackedProvider3->DefOutputEvent("Dummy", "MeshDummyEvent");
 	TGo4AnalysisStep* stepRepackedProvider3 = new TGo4AnalysisStep("stepRepackedProvider3", factoryRepackedProvider3);
 	stepRepackedProvider3->SetSourceEnabled(kFALSE);
@@ -264,28 +284,23 @@ void UserAnalysis::Construct(TString p_outfilename, TString p_setupfilename)
 	stepRepackedProvider3->SetProcessEnabled(kTRUE);
 	AddAnalysisStep(stepRepackedProvider3);
 
-// STEP3.6 - processor - beam monitoring 2 =============================================================
+	// STEP3.3 - processor - beam detector monitoring =============================================================
 
-	TGo4StepFactory* factoryBeamMonitoring2 = new TGo4StepFactory("factoryBeamMonitoring2");
-	//factoryAdvMonitoring->DefInputEvent("DetEventFull1", "DetEventFull"); // object name, class name
-	factoryBeamMonitoring2->DefEventProcessor("UserProcBeamMonitoring2", "UserProcBeamMonitoring2"); // object name, class name
-	factoryBeamMonitoring2->DefOutputEvent("UserEventBeamMonitoring2", "UserEventBeamMonitoring2"); // object name, class name
+	TGo4StepFactory* factoryBeamDetMonitoring2 = new TGo4StepFactory("factoryBeamDetMonitoring2");
+	//factoryBeamDetMonitoring->DefInputEvent("DetEventFull1", "DetEventFull"); // object name, class name
+	factoryBeamDetMonitoring2->DefEventProcessor("UserProcBeamDetMonitoring2", "UserProcBeamMonitoring2"); // object name, class name
+	factoryBeamDetMonitoring2->DefOutputEvent("UserEventBeamDetMonitoring2", "UserEventBeamMonitoring2"); // object name, class name
 
-	TGo4AnalysisStep* stepBeamMonitoring2 = new TGo4AnalysisStep("stepBeamMonitoring2", factoryBeamMonitoring2);
+	TGo4AnalysisStep* stepBeamDetMonitoring2 = new TGo4AnalysisStep("stepBeamDetMonitoring2", factoryBeamDetMonitoring2);
 
-	stepBeamMonitoring2->SetSourceEnabled(kFALSE);
-	stepBeamMonitoring2->SetProcessEnabled(kTRUE);
-	stepBeamMonitoring2->SetErrorStopEnabled(kFALSE);
+	stepBeamDetMonitoring2->SetSourceEnabled(kFALSE);
+	stepBeamDetMonitoring2->SetProcessEnabled(kTRUE);
+	stepBeamDetMonitoring2->SetErrorStopEnabled(kFALSE);
+	stepBeamDetMonitoring2->SetStoreEnabled(kFALSE);
 
-	//TGo4FileStoreParameter* storeAdvMonitoring = new TGo4FileStoreParameter("advmonitoring.root"); //TODO
-	//stepAdvMonitoring->SetEventStore(storeAdvMonitoring);
-	//stepAdvMonitoring->SetStoreEnabled(kTRUE);
-	stepBeamMonitoring2->SetStoreEnabled(kFALSE);
-
-	AddAnalysisStep(stepBeamMonitoring2);
-
-
+	AddAnalysisStep(stepBeamDetMonitoring2);
 //*/
+
 	// STEP3.3 - digibuilding =====================================================================
 /*
 	TGo4StepFactory* factoryDigiBuilding = new TGo4StepFactory("factoryDigiBuilding");

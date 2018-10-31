@@ -25,26 +25,22 @@
 #pragma link C++ class UserProcRepacking+;
 #pragma link C++ class UserHistosRepacking+;
 
-// Beam monitoring step
-//#pragma link C++ class UserEventBeamMonitoring+;
-//#pragma link C++ class UserProcBeamMonitoring+;
-//#pragma link C++ class UserHistosBeamMonitoring+;
+// Advanced monitoring step
+#pragma link C++ class UserEventAdvMonitoring+;
+#pragma link C++ class UserProcAdvMonitoring+;
+#pragma link C++ class UserHistosAdvMonitoring+;
+
+// Beam detector monitoring step
+#pragma link C++ class UserEventBeamDetMonitoring+;
+#pragma link C++ class UserProcBeamDetMonitoring+;
+#pragma link C++ class UserHistosBeamDetMonitoring+;
+#pragma link C++ class UserParamBeamDetMonitoring+;
 
 // Beam monitoring step 2
 #pragma link C++ class UserEventBeamMonitoring2+;
 #pragma link C++ class UserProcBeamMonitoring2+;
 #pragma link C++ class UserHistosBeamMonitoring2+;
 #pragma link C++ class UserParameterBeamDetector+;
-
-// Advanced monitoring step
-#pragma link C++ class UserEventAdvMonitoring+;
-#pragma link C++ class UserProcAdvMonitoring+;
-#pragma link C++ class UserHistosAdvMonitoring+;
-
-// Test monitoring step
-#pragma link C++ class UserEventTestMonitoring+;
-#pragma link C++ class UserProcTestMonitoring+;
-#pragma link C++ class UserHistosTestMonitoring+;
 
 // Learn step
 #pragma link C++ class UserEventLearn+;
