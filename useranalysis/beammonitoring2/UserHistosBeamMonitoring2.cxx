@@ -14,6 +14,22 @@
 
 UserHistosBeamMonitoring2::UserHistosBeamMonitoring2() /*: fdE(0)/*, fTOF(0)/*, fTOF_ID(0)*/
 {
+
+	InitHistograms();
+	InitConditions();
+}
+
+UserHistosBeamMonitoring2::~UserHistosBeamMonitoring2()
+{
+	/**
+	 * Not 100% sure, but it looks as if you do not need to delete your histograms yourself.
+	 * TGo4AnalysisObjectManager, as part of the singleton TGo4Analysis, will take care.
+	 */
+}
+
+ClassImp(UserHistosBeamMonitoring2)
+
+void UserHistosBeamMonitoring2::InitHistograms() {
 	TGo4Analysis* a = TGo4Analysis::Instance();
 
 	fF3MultA = a->MakeTH1('I', "BM2/ToF/multAmpF3", "F3: amplitude multiplicity", 5, 0, 5);
@@ -37,6 +53,9 @@ UserHistosBeamMonitoring2::UserHistosBeamMonitoring2() /*: fdE(0)/*, fTOF(0)/*, 
 	fdE = a->MakeTH1('I', "BM2/ToF/dE_F5", "energy deposit in F5", (Int_t)range_dE, 0., range_dE);
 	fTOF = a->MakeTH1('I', "BM2/ToF/tof", "time of flight", noTOFbins, 100, range_TOF, "time", "counts");
 	fTOF_ID = a->MakeTH2('I', "BM2/ToF/TOF_ID", "Y1 vs X1: mm", noTOFbins, 0, 200, (Int_t)range_dE, 0, 2500,"TOF","dE_F5");
+//	fTOF_ID->SetDrawOption("lego");
+//	cout << a->GetHistogram("BM2/ToF/TOF_ID") << "\t" << fTOF_ID << endl;
+	fdE->SetLineColor(kRed);
 
 	fMWPCwire[0] = a->MakeTH1('I', "BM2/wires/X1w", "My new histogram", 32, 0, 32);
 	fMWPCwire[1] = a->MakeTH1('I', "BM2/wires/Y1w", "My new histogram", 32, 0, 32);
@@ -84,29 +103,18 @@ UserHistosBeamMonitoring2::UserHistosBeamMonitoring2() /*: fdE(0)/*, fTOF(0)/*, 
 
 	fMWPCwireEff = a->MakeTH1('D', "BM2/wireEff", "Multiplicity 1 in wires", 5, 0, 5);
 	fMWPCclusterEff = a->MakeTH1('D', "BM2/clusterEff", "Multiplicity 1 in clusters", 5, 0, 5);
+}
 
+void UserHistosBeamMonitoring2::InitConditions() {
 
 	//conditions
+	TGo4Analysis* a = TGo4Analysis::Instance();
 
 	// example of TGo4ShapedCond
-	fBoxCond = new TGo4ShapedCond("boxcond");
+	fBoxCond = new TGo4ShapedCond("beamParticle");
 	fBoxCond->SetBox(109.,850.,1.,110., 0);
 	fBoxCond->SetHistogram("BM2/ToF/TOF_ID");
 	if(!fBoxCond->IsEnabled()) fBoxCond->Enable();
 	a->AddAnalysisCondition(fBoxCond);
-
-}
-
-UserHistosBeamMonitoring2::~UserHistosBeamMonitoring2()
-{
-	/**
-	 * Not 100% sure, but it looks as if you do not need to delete your histograms yourself.
-	 * TGo4AnalysisObjectManager, as part of the singleton TGo4Analysis, will take care.
-	 */
-}
-
-ClassImp(UserHistosBeamMonitoring2)
-
-void UserHistosBeamMonitoring2::InitConditions() {
 
 }

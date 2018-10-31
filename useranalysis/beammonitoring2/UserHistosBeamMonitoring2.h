@@ -63,6 +63,7 @@ public:
 
 	ClassDef(UserHistosBeamMonitoring2, 1);
 
+	void InitHistograms();
 	void InitConditions();
 };
 
